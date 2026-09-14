@@ -341,7 +341,7 @@ Additionally, there was a subtle issue with the `COPY` order: copying `node_modu
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 devsecops-exam-starter/
