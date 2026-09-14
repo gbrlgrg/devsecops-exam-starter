@@ -1,0 +1,38 @@
+# Dependencies — these are installed fresh inside the container via `npm ci`,
+# so copying the host's node_modules would be wasteful and could introduce
+# platform-incompatible native binaries.
+node_modules/
+
+# Git history and metadata — not needed at runtime and would unnecessarily
+# bloat the image.
+.git/
+.gitignore
+
+# IDE and editor configuration files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test coverage reports — generated artifacts, not needed in production
+coverage/
+
+# Environment files — secrets should be injected at runtime via environment
+# variables or a secrets manager, never baked into the image.
+.env
+.env.*
+
+# Documentation and non-runtime files
+README.md
+*.pdf
+*.md
+LICENSE
+
+# Docker-related files — no need to include these inside the image itself
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# OS-generated files
+.DS_Store
+Thumbs.db
