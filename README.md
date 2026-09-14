@@ -173,7 +173,7 @@ This reduces build context size, speeds up builds, and prevents accidental inclu
 
 ---
 
-## ⚙️ CI/CD Pipeline
+## CI/CD Pipeline
 
 ### Workflow File: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 
