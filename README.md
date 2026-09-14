@@ -318,6 +318,10 @@ Total: 2 (MEDIUM: 1, HIGH: 1)
 
 ## Challenges Faced
 
+**Main Challenge** 
+
+I had little to no idea how to set up Docker and a GitHub Actions workflow, so I brainstormed a proper approach for each task described in the engineering challenge. With the help of AI such as ChatGPT and Claude, I was able to identify the specific areas I need to learn for setting up Docker and GitHub Actions. I also searched online for methods on how to conduct tests and which tool is best for scanning, which, as mentioned above, led me to use Trivy. This challenge taught me a lot about what it's like to set up something this comprehensive as a DevSecOps engineer. If given the opportunity, I am eager to learn more and look forward to expanding my knowledge of containerization, continuous integration, and their respective tools to help me become a better DevSecOps engineer. 
+
 ### Challenge: Getting the Multi-Stage Docker Build to Work Correctly
 
 **The Problem:**
