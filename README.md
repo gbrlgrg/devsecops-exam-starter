@@ -1,6 +1,6 @@
 # Macky Merch API — DevSecOps Starter
 
-**LSCS DevSecOps Engineering Take-Home Exam | September 2026**
+**LSCS DevSecOps Engineering Take-Home Exam**
 
 A containerized Express.js API with a fully automated CI/CD pipeline that integrates security scanning at every stage — from dependency audits to Docker image vulnerability analysis.
 
