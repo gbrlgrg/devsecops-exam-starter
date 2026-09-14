@@ -60,3 +60,42 @@ jobs:
       # ---------------------------------------------------------------
       - name: Build Docker image
         run: docker build -t macky-merch-api:${{ github.sha }} .
+
+      # ---------------------------------------------------------------
+      # STEP 6: npm audit — Dependency vulnerability scan
+      # Runs Node's built-in audit tool to check all installed packages
+      # against the npm advisory database. `--audit-level=moderate`
+      # flags anything moderate severity or above.
+      # `|| true` ensures the workflow continues so we can also run
+      # Trivy and capture all findings — remove it in production if
+      # you want the pipeline to hard-fail on vulnerabilities.
+      # ---------------------------------------------------------------
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate || true
+
+      # ---------------------------------------------------------------
+      # STEP 7: Trivy — Filesystem vulnerability scan
+      # Scans the project directory (package.json / package-lock.json)
+      # for dependencies with known CVEs. Trivy pulls its own
+      # vulnerability database and reports findings in a table.
+      # ---------------------------------------------------------------
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+          exit-code: '0'   # Don't fail — let us capture the output
+
+      # ---------------------------------------------------------------
+      # STEP 8: Trivy — Docker image vulnerability scan
+      # Scans the Docker image we just built for OS-level and
+      # application-level vulnerabilities. This catches issues in
+      # both the Alpine base image and our npm packages.
+      # ---------------------------------------------------------------
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'macky-merch-api:${{ github.sha }}'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+          exit-code: '0'   # Don't fail — let us capture the output
