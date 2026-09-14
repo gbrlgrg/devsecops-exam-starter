@@ -115,7 +115,7 @@ The Dockerfile uses **`node:18-alpine`** for both the build and production stage
 | **Image Size**      | ~50 MB (Alpine base is ~5 MB)                 | ~350 MB+                                    |
 | **Attack Surface**  | Minimal since only essential packages installed   | Much larger since there are hundreds of extra packages    |
 | **CVE Exposure**    | Fewer potential CVEs          | More potential CVEs         |
-| **Reproducibility** | Pinned to Node 18 — deterministic builds      | `latest` drifts with every release          |
+| **Reproducibility** | Pinned to Node 18 makes sure deterministic builds      | `latest` drifts with every release          |
 | **Startup Time**    | Faster image pull and container startup        | Slower due to larger download               |
 
 **Alpine Linux** is a security-oriented, lightweight distribution. By choosing it, we minimize the number of OS-level packages in the container, which directly reduces the number of potential vulnerabilities that Trivy (or any scanner) would flag. Pinning to Node **18** (instead of `latest`) ensures that builds are **reproducible** — the same Dockerfile produces the same result regardless of when it's built.
