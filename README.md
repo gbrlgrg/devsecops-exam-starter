@@ -113,8 +113,8 @@ The Dockerfile uses **`node:18-alpine`** for both the build and production stage
 | Consideration       | `node:18-alpine`                              | `node:latest` (Debian-based)                |
 | ------------------- | --------------------------------------------- | ------------------------------------------- |
 | **Image Size**      | ~50 MB (Alpine base is ~5 MB)                 | ~350 MB+                                    |
-| **Attack Surface**  | Minimal — only essential packages installed   | Much larger — hundreds of extra packages    |
-| **CVE Exposure**    | Fewer packages = fewer potential CVEs          | More packages = more potential CVEs         |
+| **Attack Surface**  | Minimal since only essential packages installed   | Much larger since there are hundreds of extra packages    |
+| **CVE Exposure**    | Fewer potential CVEs          | More potential CVEs         |
 | **Reproducibility** | Pinned to Node 18 — deterministic builds      | `latest` drifts with every release          |
 | **Startup Time**    | Faster image pull and container startup        | Slower due to larger download               |
 
