@@ -1,0 +1,62 @@
+name: CI Pipeline
+
+# ---------------------------------------------------------------
+# TRIGGER: Run this workflow on every push and pull request
+# targeting the main branch.
+# ---------------------------------------------------------------
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    name: Test & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      # ---------------------------------------------------------------
+      # STEP 1: Check out the repository code
+      # This clones your repo into the GitHub Actions runner so all
+      # subsequent steps can access your files.
+      # ---------------------------------------------------------------
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ---------------------------------------------------------------
+      # STEP 2: Set up Node.js
+      # Installs Node.js 18 on the runner. We pin to version 18 to
+      # match the version used in our Dockerfile for consistency.
+      # ---------------------------------------------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'  # Caches the npm dependency cache for faster runs
+
+      # ---------------------------------------------------------------
+      # STEP 3: Install dependencies
+      # `npm ci` is preferred over `npm install` in CI environments
+      # because it does a clean install strictly from package-lock.json,
+      # ensuring deterministic and reproducible builds.
+      # ---------------------------------------------------------------
+      - name: Install dependencies
+        run: npm ci
+
+      # ---------------------------------------------------------------
+      # STEP 4: Run automated tests
+      # Executes the Jest test suite. If any test fails, the entire
+      # workflow fails — preventing broken code from being merged.
+      # ---------------------------------------------------------------
+      - name: Run tests
+        run: npm test
+
+      # ---------------------------------------------------------------
+      # STEP 5: Build Docker image
+      # Builds the Docker image to verify the Dockerfile is valid and
+      # the application can be successfully containerized.
+      # We tag it with the Git commit SHA for traceability.
+      # ---------------------------------------------------------------
+      - name: Build Docker image
+        run: docker build -t macky-merch-api:${{ github.sha }} .
