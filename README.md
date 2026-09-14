@@ -1,6 +1,6 @@
 # Macky Merch API — DevSecOps Starter
 
-**LSCS DevSecOps Engineering Take-Home Exam | September 2026**
+**LSCS DevSecOps Engineering Take-Home Exam**
 
 A containerized Express.js API with a fully automated CI/CD pipeline that integrates security scanning at every stage — from dependency audits to Docker image vulnerability analysis.
 
@@ -173,7 +173,7 @@ This reduces build context size, speeds up builds, and prevents accidental inclu
 
 ---
 
-## ⚙️ CI/CD Pipeline
+## CI/CD Pipeline
 
 ### Workflow File: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 
@@ -224,12 +224,25 @@ Push / PR to main
 - **Configuration:** `--audit-level=moderate` flags anything moderate severity or above.
 - **Trade-off:** `|| true` is appended so the pipeline continues to run Trivy as well, capturing all findings in a single run. In a real production environment, you would remove `|| true` to hard-fail on vulnerabilities.
 
+#### npm audit Output
+
+![npm audit detecting lodash vulnerabilities](docs/npm-audit.png)
+
 #### 2. Trivy — Comprehensive Vulnerability Scanner
 
 - **Why:** Trivy (by Aqua Security) is an industry-standard, open-source vulnerability scanner. It goes beyond just npm packages — it can scan OS packages, container images, IaC files, and more.
 - **Filesystem scan (`scan-type: 'fs'`):** Scans `package.json` / `package-lock.json` for dependencies with known CVEs.
 - **Image scan (`image-ref`):** Scans the final Docker image for both Alpine OS-level vulnerabilities **and** application-level vulnerabilities. This catches issues that a filesystem-only scan would miss (e.g., vulnerabilities in the base Alpine image itself).
 - **Severity filter:** `CRITICAL,HIGH,MEDIUM` — we ignore LOW severity to reduce noise.
+
+#### Trivy Filesystem Scan Output
+
+![Trivy filesystem scan results](docs/trivy-fs-scan.png)
+
+#### Trivy Image Scan Output
+
+![Trivy filesystem scan results](docs/trivy-image-scan-1.png)
+![Trivy filesystem scan results](docs/trivy-image-scan-2.png)
 
 **Why Trivy over alternatives?**
 
@@ -341,7 +354,7 @@ Additionally, there was a subtle issue with the `COPY` order: copying `node_modu
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 devsecops-exam-starter/
