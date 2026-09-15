@@ -328,7 +328,7 @@ When the CI pipeline runs, **both** `npm audit` and Trivy detect and flag the vu
 
 #### Trivy Docker Image Scan Output
 
-![Trivy Docker image scan results](docs/trivy-image-scan.png)
+![Trivy Docker image scan results](docs/trivy-image-scan-1.png)
 
 > *Screenshot above: Trivy scans the built Docker image for both OS-level (Alpine) and application-level vulnerabilities.*
 
@@ -364,8 +364,6 @@ Additionally, there was a subtle issue with the `COPY` order: copying `node_modu
 
 ---
 
-<<<<<<< Updated upstream
-=======
 ## Submission Checklist
 
 | Requirement                                                    | Status |
@@ -382,7 +380,6 @@ Additionally, there was a subtle issue with the `COPY` order: copying `node_modu
 
 ---
 
->>>>>>> Stashed changes
 ## Project Structure
 
 ```
