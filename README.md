@@ -364,22 +364,6 @@ Additionally, there was a subtle issue with the `COPY` order: copying `node_modu
 
 ---
 
-## Submission Checklist
-
-| Requirement                                                    | Status |
-| -------------------------------------------------------------- | ------ |
-| Starter repository was successfully forked                     | ✅      |
-| Dockerfile is included and runs as a non-root user             | ✅      |
-| `.dockerignore` is included                                    | ✅      |
-| GitHub Actions workflow (`ci.yml`) runs tests and builds image | ✅      |
-| Security scanner is integrated into the workflow               | ✅      |
-| README explains architecture and demonstrates scanner results  | ✅      |
-| Multi-stage Docker build (Bonus)                               | ✅      |
-| Docker Compose with dummy database (Bonus)                     | ✅      |
-| Branch Protection (Bonus)                                      | ⬜ (GitHub repo setting — see instructions above) |
-
----
-
 ## Project Structure
 
 ```
