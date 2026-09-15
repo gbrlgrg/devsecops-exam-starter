@@ -83,7 +83,40 @@ Expected response:
 docker stop macky-merch && docker rm macky-merch
 ```
 
-### Option 2 — Run Locally (Without Docker)
+### Option 2 — Run with Docker Compose (API + Redis)
+
+Docker Compose spins up both the API and a **Redis** database container on a shared network:
+
+```bash
+docker compose up --build
+```
+
+This will:
+- Build the API image from the Dockerfile
+- Pull the `redis:7-alpine` image
+- Start both containers on a shared `macky-network` bridge network
+- Wait for Redis to be healthy before starting the API
+
+**Verify both services are running:**
+
+```bash
+# Check the API
+curl http://localhost:3000/health
+
+# Check Redis
+docker exec macky-merch-redis redis-cli ping
+# Expected output: PONG
+```
+
+**Stop and clean up:**
+
+```bash
+docker compose down
+```
+
+> The API can reach Redis internally at `redis:6379` via the Docker network — no external port exposure required for inter-service communication.
+
+### Option 3 — Run Locally (Without Docker)
 
 ```bash
 # Install dependencies
@@ -283,34 +316,21 @@ When the CI pipeline runs, **both** `npm audit` and Trivy detect and flag the vu
 
 #### npm audit Output
 
-```
-lodash  <=4.17.20
-Severity: high
-Command Injection - https://github.com/advisories/GHSA-35jh-r3h4-6jhm
-fix available via `npm audit fix`
+![npm audit detecting lodash vulnerabilities](docs/npm-audit.png)
 
-lodash  <=4.17.20
-Severity: moderate  
-Regular Expression Denial of Service (ReDoS) - https://github.com/advisories/GHSA-29mw-wpgm-hmr9
-fix available via `npm audit fix`
-
-2 vulnerabilities (1 moderate, 1 high)
-```
+> *Screenshot above: `npm audit` flags both the high-severity Command Injection (CVE-2021-23337) and the moderate-severity ReDoS (CVE-2020-28500) in `lodash@4.17.20`.*
 
 #### Trivy Filesystem Scan Output
 
-```
-package-lock.json (npm)
+![Trivy filesystem scan results](docs/trivy-fs-scan.png)
 
-Total: 2 (MEDIUM: 1, HIGH: 1)
+> *Screenshot above: Trivy's filesystem scan detects the same two CVEs in `lodash@4.17.20` and reports the fixed version (`4.17.21`).*
 
-┌─────────┬────────────────┬──────────┬───────────────────┬───────────────┬──────────────────────────────────────┐
-│ Library │ Vulnerability  │ Severity │ Installed Version │ Fixed Version │ Title                                │
-├─────────┼────────────────┼──────────┼───────────────────┼───────────────┼──────────────────────────────────────┤
-│ lodash  │ CVE-2021-23337 │ HIGH     │ 4.17.20           │ 4.17.21       │ Command Injection                    │
-│ lodash  │ CVE-2020-28500 │ MEDIUM   │ 4.17.20           │ 4.17.21       │ Regular Expression Denial of Service │
-└─────────┴────────────────┴──────────┴───────────────────┴───────────────┴──────────────────────────────────────┘
-```
+#### Trivy Docker Image Scan Output
+
+![Trivy Docker image scan results](docs/trivy-image-scan.png)
+
+> *Screenshot above: Trivy scans the built Docker image for both OS-level (Alpine) and application-level vulnerabilities.*
 
 > **Key takeaway:** The pipeline successfully **detects and reports** the known vulnerabilities in the deliberately outdated `lodash@4.17.20` dependency. In a production setup, you would set `exit-code: '1'` on the Trivy steps and remove `|| true` from `npm audit` to **block the pipeline** from proceeding when vulnerabilities are found.
 
@@ -344,6 +364,25 @@ Additionally, there was a subtle issue with the `COPY` order: copying `node_modu
 
 ---
 
+<<<<<<< Updated upstream
+=======
+## Submission Checklist
+
+| Requirement                                                    | Status |
+| -------------------------------------------------------------- | ------ |
+| Starter repository was successfully forked                     | ✅      |
+| Dockerfile is included and runs as a non-root user             | ✅      |
+| `.dockerignore` is included                                    | ✅      |
+| GitHub Actions workflow (`ci.yml`) runs tests and builds image | ✅      |
+| Security scanner is integrated into the workflow               | ✅      |
+| README explains architecture and demonstrates scanner results  | ✅      |
+| Multi-stage Docker build (Bonus)                               | ✅      |
+| Docker Compose with dummy database (Bonus)                     | ✅      |
+| Branch Protection (Bonus)                                      | ⬜ (GitHub repo setting — see instructions above) |
+
+---
+
+>>>>>>> Stashed changes
 ## Project Structure
 
 ```
@@ -351,8 +390,13 @@ devsecops-exam-starter/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml              # GitHub Actions CI/CD pipeline
+├── docs/                       # Screenshots of pipeline results
+│   ├── npm-audit.png           # npm audit vulnerability output
+│   ├── trivy-fs-scan.png       # Trivy filesystem scan output
+│   └── trivy-image-scan.png    # Trivy Docker image scan output
 ├── .dockerignore               # Files excluded from Docker build context
 ├── .gitignore                  # Files excluded from Git tracking
+├── docker-compose.yml          # Multi-container orchestration (API + Redis)
 ├── Dockerfile                  # Multi-stage Docker build configuration
 ├── package.json                # Node.js dependencies and scripts
 ├── package-lock.json           # Locked dependency versions

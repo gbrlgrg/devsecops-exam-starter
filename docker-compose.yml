@@ -1,0 +1,84 @@
+# ---------------------------------------------------------------
+# Docker Compose — Macky Merch API + Redis
+#
+# Spins up the Node.js API alongside a Redis instance on a shared
+# Docker network. This demonstrates multi-container orchestration,
+# a key DevSecOps concept.
+#
+# Usage:
+#   docker compose up --build        # Build and start all services
+#   docker compose up --build -d     # Same, but detached (background)
+#   docker compose down              # Stop and remove all containers
+# ---------------------------------------------------------------
+
+services:
+  # ---------------------------------------------------------------
+  # API Service — Macky Merch API
+  # Builds from the local Dockerfile (multi-stage) and exposes
+  # the Express server on port 3000.
+  # ---------------------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: macky-merch-api
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - macky-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
+  # ---------------------------------------------------------------
+  # Redis Service — Dummy Database
+  # A lightweight in-memory data store used as a dummy database
+  # to demonstrate multi-container networking. The API and Redis
+  # communicate over the internal `macky-network` bridge network.
+  # ---------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: macky-merch-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - macky-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      start_period: 5s
+      retries: 3
+    volumes:
+      - redis-data:/data
+
+# ---------------------------------------------------------------
+# Network — Shared bridge network
+# Both services are attached to this network, allowing them to
+# communicate using their service names as hostnames
+# (e.g., the API can reach Redis at `redis:6379`).
+# ---------------------------------------------------------------
+networks:
+  macky-network:
+    driver: bridge
+
+# ---------------------------------------------------------------
+# Volumes — Persistent Redis data
+# Named volume ensures Redis data survives container restarts.
+# ---------------------------------------------------------------
+volumes:
+  redis-data:
+    driver: local
