@@ -14,7 +14,7 @@ A containerized Express.js API with a fully automated CI/CD pipeline that integr
 - [CI/CD Pipeline](#-cicd-pipeline)
 - [Vulnerability Demonstration](#-vulnerability-demonstration)
 - [Challenges Faced](#-challenges-faced)
-- [Submission Checklist](#-submission-checklist)
+- [What's Completed](#-whats-completed)
 
 ---
 
@@ -361,6 +361,24 @@ Additionally, there was a subtle issue with the `COPY` order: copying `node_modu
 4. **Used `npm ci` over `npm install`** — `npm ci` does a clean install strictly from `package-lock.json`, ensuring deterministic, reproducible builds. This eliminated "works on my machine" issues between local development and CI.
 
 **Lesson learned:** In DevSecOps, every layer of the build process is a potential attack vector. Multi-stage builds let you separate "build-time concerns" (testing, compiling) from "run-time concerns" (serving traffic), keeping the final artifact minimal and secure.
+
+---
+
+## What's Completed
+
+### Core Requirements
+
+- **Forked the starter repository** and built the entire DevSecOps pipeline on top of the provided baseline Express.js application.
+- **Containerized the application with Docker** using a multi-stage Dockerfile. The container runs as a non-root `node` user (UID 1000) for security, and a `.dockerignore` file excludes unnecessary files from the build context.
+- **Set up Continuous Integration with GitHub Actions** — the workflow (`.github/workflows/ci.yml`) triggers on every push and pull request to `main`, running code checkout, Node.js setup, dependency installation, the Jest test suite, and a Docker image build.
+- **Integrated security scanning into the pipeline** using both `npm audit` (built-in dependency scanning) and **Trivy** (filesystem + Docker image vulnerability scanning). Both tools successfully detect and flag the deliberately vulnerable `lodash@4.17.20` dependency.
+- **Documented the entire architecture** in this README, covering setup instructions, base image rationale, security scanner choices, vulnerability demonstration with screenshots, and challenges faced.
+
+### Bonus Features
+
+- **Multi-Stage Docker Build** — The Dockerfile uses a two-stage build (`builder` → `production`) to keep the final image lean and secure by discarding devDependencies, test files, and build artifacts.
+- **Docker Compose** — A `docker-compose.yml` file orchestrates the API alongside a Redis container on a shared bridge network, demonstrating multi-container deployment.
+- **Branch Protection** — Enabled on the `main` branch to require status checks (CI pipeline) to pass before pull requests can be merged.
 
 ---
 
