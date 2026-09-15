@@ -1,5 +1,5 @@
 name: CI Pipeline
-
+# Comments are here so I could help decipher the workflow file. 
 # ---------------------------------------------------------------
 # TRIGGER: Run this workflow on every push and pull request
 # targeting the main branch.
@@ -18,16 +18,15 @@ jobs:
     steps:
       # ---------------------------------------------------------------
       # STEP 1: Check out the repository code
-      # This clones your repo into the GitHub Actions runner so all
-      # subsequent steps can access your files.
+      # Para ma clone yung repo sa GitHub Actions runner.
       # ---------------------------------------------------------------
       - name: Checkout code
         uses: actions/checkout@v4
 
       # ---------------------------------------------------------------
       # STEP 2: Set up Node.js
-      # Installs Node.js 18 on the runner. We pin to version 18 to
-      # match the version used in our Dockerfile for consistency.
+      # Installs Node.js 18 on the runner. We pin to version 18
+      # para same sa Docker version.
       # ---------------------------------------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -38,16 +37,14 @@ jobs:
       # ---------------------------------------------------------------
       # STEP 3: Install dependencies
       # `npm ci` is preferred over `npm install` in CI environments
-      # because it does a clean install strictly from package-lock.json,
-      # ensuring deterministic and reproducible builds.
+      # para clean yung install.
       # ---------------------------------------------------------------
       - name: Install dependencies
         run: npm ci
 
       # ---------------------------------------------------------------
       # STEP 4: Run automated tests
-      # Executes the Jest test suite. If any test fails, the entire
-      # workflow fails — preventing broken code from being merged.
+      # Runs Jest Test suite.
       # ---------------------------------------------------------------
       - name: Run tests
         run: npm test
@@ -56,19 +53,18 @@ jobs:
       # STEP 5: Build Docker image
       # Builds the Docker image to verify the Dockerfile is valid and
       # the application can be successfully containerized.
-      # We tag it with the Git commit SHA for traceability.
+      # Use Git commit sha para matrace easily.
       # ---------------------------------------------------------------
       - name: Build Docker image
         run: docker build -t macky-merch-api:${{ github.sha }} .
 
       # ---------------------------------------------------------------
       # STEP 6: npm audit — Dependency vulnerability scan
-      # Runs Node's built-in audit tool to check all installed packages
+      # Node's built-in audit tool check all installed packages
       # against the npm advisory database. `--audit-level=moderate`
       # flags anything moderate severity or above.
       # `|| true` ensures the workflow continues so we can also run
-      # Trivy and capture all findings — remove it in production if
-      # you want the pipeline to hard-fail on vulnerabilities.
+      # Trivy and capture all findings.
       # ---------------------------------------------------------------
       - name: Run npm audit
         run: npm audit --audit-level=moderate || true

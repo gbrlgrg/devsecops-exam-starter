@@ -1,14 +1,14 @@
+# Comments are here for documentation purposes to help decipher the workflow file.
+
 # ---------------------------------------------------------------
 # Docker Compose — Macky Merch API + Redis
 #
 # Spins up the Node.js API alongside a Redis instance on a shared
-# Docker network. This demonstrates multi-container orchestration,
-# a key DevSecOps concept.
-#
-# Usage:
-#   docker compose up --build        # Build and start all services
-#   docker compose up --build -d     # Same, but detached (background)
-#   docker compose down              # Stop and remove all containers
+# Docker network to show multi-container orchestration.
+# 
+#  docker compose up --build        # Build and start all services
+#  docker compose up --build -d     # Same, but detached (background)
+#  docker compose down              # Stop and remove all containers
 # ---------------------------------------------------------------
 
 services:

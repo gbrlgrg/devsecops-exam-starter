@@ -1,7 +1,5 @@
 # ---- Stage 1: Build ----
 # Use the official Node.js 18 Alpine image as the build stage.
-# Alpine is chosen for its minimal footprint (~5 MB base), which reduces
-# the final image size and attack surface compared to full Debian-based images.
 FROM node:18-alpine AS builder
 
 # Set the working directory inside the container
@@ -10,7 +8,7 @@ WORKDIR /app
 # Copy only the package manifest files first.
 # This leverages Docker's layer caching: dependencies are only reinstalled
 # when package.json or package-lock.json actually change, not on every
-# source-code edit — significantly speeding up rebuilds.
+# source-code edit to significantly speeding up rebuilds.
 COPY package.json package-lock.json ./
 
 # Install ALL dependencies (including devDependencies needed for testing).
@@ -22,13 +20,11 @@ RUN npm ci
 COPY . .
 
 # Run the test suite during the build so the image is only produced
-# when all tests pass — a quality gate baked into the container build.
+# when all tests pass to serve as a quality gate baked into the container build.
 RUN npm test
 
 # ---- Stage 2: Production ----
 # Start a fresh, clean image for the final production artifact.
-# This discards build tools, devDependencies, test files, and any other
-# intermediate artifacts, keeping the final image lean and secure.
 FROM node:18-alpine AS production
 
 # Add metadata labels following OCI conventions
@@ -52,7 +48,7 @@ RUN npm ci --only=production --ignore-scripts
 # files that passed the test stage make it into production.
 COPY --from=builder /app/server.js ./
 
-# ---- Security Best Practice: Non-Root User ----
+# Security Best Practice: Non-Root User
 # The official node:*-alpine images ship with a built-in `node` user (UID 1000).
 # Switching to this user ensures the application never runs as root inside
 # the container, limiting the blast radius if the process is ever compromised.
